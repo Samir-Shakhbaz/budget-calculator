@@ -17,6 +17,6 @@ public class Expense {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String type;  // e.g., Utilities, Groceries, Transportation
+    private String type;  // Utilities, Groceries, Transportation
     private double amount;
 }
