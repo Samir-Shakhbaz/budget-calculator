@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Add Housing</title>
+</head>
+<body>
+<h1>Add Housing</h1>
+<form action="/housing/save" method="post">
+    <label for="location">Location:</label>
+    <input type="text" id="location" name="location" th:value="${housing.location}" required>
+    <label for="averageRent">Average Rent:</label>
+    <input type="number" id="averageRent" name="averageRent" th:value="${housing.averageRent}" step="0.01" required>
+    <label for="averageHomePrice">Average Home Price:</label>
+    <input type="number" id="averageHomePrice" name="averageHomePrice" th:value="${housing.averageHomePrice}" step="0.01" required>
+    <input type="submit" value="Save">
+</form>
+<a href="/housing">Back to list</a>
+</body>
+</html>

@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Location List</title>
+</head>
+<body>
+<h1>Location List</h1>
+<a href="/locations/add">Add New Location</a>
+<table>
+    <thead>
+    <tr>
+        <th>ID</th>
+        <th>City</th>
+        <th>State</th>
+        <th>Country</th>
+        <th>Crime Rate</th>
+        <th>Demographics</th>
+        <th>Actions</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="location : ${locationList}">
+        <td th:text="${location.id}"></td>
+        <td th:text="${location.city}"></td>
+        <td th:text="${location.state}"></td>
+        <td th:text="${location.country}"></td>
+        <td th:text="${location.crimeRate}"></td>
+        <td th:text="${location.demographics}"></td>
+        <td>
+            <a th:href="@{/locations/edit/{id}(id=${location.id})}">Edit</a>
+            <a th:href="@{/locations/delete/{id}(id=${location.id})}" onclick="return confirm('Are you sure?');">Delete</a>
+        </td>
+    </tr>
+    </tbody>
+</table>
+</body>
+</html>

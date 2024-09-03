@@ -1,38 +1,60 @@
 package com.sash.budget_calculator.controllers;
 
 import com.sash.budget_calculator.model.Expense;
+import com.sash.budget_calculator.repositories.ExpenseRepository;
 import com.sash.budget_calculator.services.ExpenseService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional;
 
-@RestController
-@RequestMapping("/api/expenses")
+@Controller
+@RequestMapping("/expenses")
 public class ExpenseController {
 
     @Autowired
-    private ExpenseService expenseService;
+    private ExpenseRepository expenseRepository;
 
     @GetMapping
-    public List<Expense> getAllExpenses() {
-        return expenseService.getAllExpenses();
+    public String listExpenses(Model model) {
+        model.addAttribute("expenses", expenseRepository.findAll());
+        return "expenses/expenses";
     }
 
-    @GetMapping("/{id}")
-    public Optional<Expense> getExpenseById(@PathVariable Long id) {
-        return expenseService.getExpenseById(id);
+    @GetMapping("/create")
+    public String createExpenseForm(Model model) {
+        model.addAttribute("expense", new Expense());
+        return "expenses/create-expenses";
     }
 
-    @PostMapping
-    public Expense createExpense(@RequestBody Expense expense) {
-        return expenseService.createExpense(expense);
+    @PostMapping("/create")
+    public String createExpense(@ModelAttribute Expense expense) {
+        expenseRepository.save(expense);
+        return "redirect:/expenses";
     }
 
-    @DeleteMapping("/{id}")
-    public void deleteExpense(@PathVariable Long id) {
-        expenseService.deleteExpense(id);
+    @GetMapping("/edit/{id}")
+    public String editExpenseForm(@PathVariable("id") Long id, Model model) {
+        Expense expense = expenseRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("Invalid expense id:" + id));
+        model.addAttribute("expense", expense);
+        return "expenses/edit-expenses";
+    }
+
+    @PostMapping("/edit/{id}")
+    public String updateExpense(@PathVariable("id") Long id, @ModelAttribute Expense expense) {
+        expense.setId(id);
+        expenseRepository.save(expense);
+        return "redirect:/expenses";
+    }
+
+    @GetMapping("/delete/{id}")
+    public String deleteExpense(@PathVariable("id") Long id) {
+        expenseRepository.deleteById(id);
+        return "redirect:/expenses";
     }
 }
+
 

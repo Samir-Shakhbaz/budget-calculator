@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Create Expense</title>
+</head>
+<body>
+<h1>Create Expense</h1>
+<form th:action="@{/expenses/create}" th:object="${expense}" method="post">
+    <label for="type">Type:</label>
+    <input type="text" id="type" th:field="*{type}" />
+    <label for="amount">Amount:</label>
+    <input type="number" id="amount" th:field="*{amount}" step="0.01" />
+    <button type="submit">Save</button>
+</form>
+<a href="/expenses">Back to List</a>
+</body>
+</html>

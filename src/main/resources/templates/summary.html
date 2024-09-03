@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Summary</title>
+</head>
+<body>
+<h1>Summary of Entities</h1>
+
+<h2>Expenses</h2>
+<table>
+    <thead>
+    <tr>
+        <th>ID</th>
+        <th>Type</th>
+        <th>Amount</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="expense : ${expenses}">
+        <td th:text="${expense.id}"></td>
+        <td th:text="${expense.type}"></td>
+        <td th:text="${expense.amount}"></td>
+    </tr>
+    </tbody>
+</table>
+
+<h2>Housing</h2>
+<table>
+    <thead>
+    <tr>
+        <th>ID</th>
+        <th>Location</th>
+        <th>Average Rent</th>
+        <th>Average Home Price</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="housing : ${housings}">
+        <td th:text="${housing.id}"></td>
+        <td th:text="${housing.location}"></td>
+        <td th:text="${housing.averageRent}"></td>
+        <td th:text="${housing.averageHomePrice}"></td>
+    </tr>
+    </tbody>
+</table>
+
+<h2>Locations</h2>
+<table>
+    <thead>
+    <tr>
+        <th>ID</th>
+        <th>City</th>
+        <th>State</th>
+        <th>Country</th>
+        <th>Crime Rate</th>
+        <th>Demographics</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="location : ${locations}">
+        <td th:text="${location.id}"></td>
+        <td th:text="${location.city}"></td>
+        <td th:text="${location.state}"></td>
+        <td th:text="${location.country}"></td>
+        <td th:text="${location.crimeRate}"></td>
+        <td th:text="${location.demographics}"></td>
+    </tr>
+    </tbody>
+</table>
+
+<h2>Users</h2>
+<table>
+    <thead>
+    <tr>
+        <th>ID</th>
+        <th>Name</th>
+        <th>Gross Salary</th>
+        <th>Net Salary</th>
+        <th>Location</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="user : ${users}">
+        <td th:text="${user.id}"></td>
+        <td th:text="${user.name}"></td>
+        <td th:text="${user.grossSalary}"></td>
+        <td th:text="${user.netSalary}"></td>
+        <td th:text="${user.location}"></td>
+    </tr>
+    </tbody>
+</table>
+
+</body>
+</html>

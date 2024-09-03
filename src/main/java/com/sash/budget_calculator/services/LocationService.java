@@ -23,9 +23,7 @@ public class LocationService {
         return locationRepository.findById(id);
     }
 
-    public Location createLocation(Location location) {
-        return locationRepository.save(location);
-    }
+    public void saveLocation(Location location) {locationRepository.save(location);}
 
     public void deleteLocation(Long id) {
         locationRepository.deleteById(id);

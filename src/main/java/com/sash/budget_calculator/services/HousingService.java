@@ -22,8 +22,8 @@ public class HousingService {
         return housingRepository.findById(id);
     }
 
-    public Housing createHousing(Housing housing) {
-        return housingRepository.save(housing);
+    public void saveHousing(Housing housing) {
+        housingRepository.save(housing);
     }
 
     public void deleteHousing(Long id) {

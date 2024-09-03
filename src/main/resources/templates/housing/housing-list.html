@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <title>Housing List</title>
+</head>
+<body>
+<h1>Housing List</h1>
+<a href="/housing/add">Add New Housing</a>
+<table>
+  <thead>
+  <tr>
+    <th>ID</th>
+    <th>Location</th>
+    <th>Average Rent</th>
+    <th>Average Home Price</th>
+    <th>Actions</th>
+  </tr>
+  </thead>
+  <tbody>
+  <tr th:each="housing : ${housingList}">
+    <td th:text="${housing.id}"></td>
+    <td th:text="${housing.location}"></td>
+    <td th:text="${housing.averageRent}"></td>
+    <td th:text="${housing.averageHomePrice}"></td>
+    <td>
+      <a th:href="@{/housing/edit/{id}(id=${housing.id})}">Edit</a>
+      <a th:href="@{/housing/delete/{id}(id=${housing.id})}" onclick="return confirm('Are you sure?');">Delete</a>
+    </td>
+  </tr>
+  </tbody>
+</table>
+</body>
+</html>

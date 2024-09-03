@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Edit Location</title>
+</head>
+<body>
+<h1>Edit Location</h1>
+<form action="/locations/update" method="post">
+    <input type="hidden" name="id" th:value="${location.id}">
+    <label for="city">City:</label>
+    <input type="text" id="city" name="city" th:value="${location.city}" required>
+    <label for="state">State:</label>
+    <input type="text" id="state" name="state" th:value="${location.state}" required>
+    <label for="country">Country:</label>
+    <input type="text" id="country" name="country" th:value="${location.country}" required>
+    <label for="crimeRate">Crime Rate:</label>
+    <input type="number" id="crimeRate" name="crimeRate" th:value="${location.crimeRate}" step="0.01" required>
+    <label for="demographics">Demographics:</label>
+    <textarea id="demographics" name="demographics" required th:text="${location.demographics}"></textarea>
+    <input type="submit" value="Update">
+</form>
+<a href="/locations">Back to list</a>
+</body>
+</html>

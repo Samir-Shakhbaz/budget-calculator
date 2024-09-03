@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Affordability Calculator</title>
+    <style>
+        .slider-container {
+            margin: 20px 0;
+        }
+
+        .slider {
+            -webkit-appearance: none;
+            width: 100%;
+            height: 15px;
+            background: #ddd;
+            outline: none;
+            opacity: 0.7;
+            transition: opacity .2s;
+        }
+
+        .slider:hover {
+            opacity: 1;
+        }
+
+        .value-display {
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+<h1>Affordability Calculator</h1>
+
+<div class="slider-container">
+    <label for="housePriceSlider">House Price: $<span id="housePriceDisplay">300000</span></label>
+    <input type="range" id="housePriceSlider" class="slider" min="100000" max="1000000" step="10000" value="300000" oninput="updateHousePrice(this.value)">
+</div>
+
+<div class="slider-container">
+    <label for="salarySlider">Monthly Salary: $<span id="salaryDisplay">5000</span></label>
+    <input type="range" id="salarySlider" class="slider" min="2000" max="20000" step="500" value="5000" oninput="updateSalary(this.value)">
+</div>
+
+<div id="results" th:if="${monthlyPayment != null}">
+    <h2>Results:</h2>
+    <p>Monthly Payment: $<span id="monthlyPayment">0</span></p>
+    <p>Percentage of Income: <span id="percentageOfIncome">0</span>%</p>
+</div>
+
+<script>
+    // Constants for calculation
+    const LOAN_TERM_YEARS = 30;
+    const INTEREST_RATE = 0.03; // Example fixed interest rate
+
+    function updateHousePrice(value) {
+        document.getElementById('housePriceDisplay').innerText = value;
+        const salary = calculateRequiredSalary(value);
+        document.getElementById('salaryDisplay').innerText = salary.toFixed(2);
+        updateResults(value, salary);
+    }
+
+    function updateSalary(value) {
+        document.getElementById('salaryDisplay').innerText = value;
+        const housePrice = calculateRequiredHousePrice(value);
+        document.getElementById('housePriceDisplay').innerText = housePrice.toFixed(2);
+        updateResults(housePrice, value);
+    }
+
+    function calculateRequiredSalary(housePrice) {
+        // Calculate the required monthly salary to afford the house price
+        const monthlyPayment = calculateMonthlyPayment(housePrice);
+        return monthlyPayment * 2.5; // Example ratio for affordability
+    }
+
+    function calculateRequiredHousePrice(salary) {
+        // Calculate the maximum house price affordable based on the salary
+        const monthlyPayment = salary / 2.5; // Example ratio for affordability
+        return calculateHousePrice(monthlyPayment);
+    }
+
+    function calculateMonthlyPayment(housePrice) {
+        // Monthly mortgage payment calculation
+        const loanAmount = housePrice;
+        const monthlyInterestRate = INTEREST_RATE / 12;
+        const numberOfPayments = LOAN_TERM_YEARS * 12;
+        return (loanAmount * monthlyInterestRate) / (1 - Math.pow(1 + monthlyInterestRate, -numberOfPayments));
+    }
+
+    function calculateHousePrice(monthlyPayment) {
+        // Inverse calculation to determine the house price
+        const monthlyInterestRate = INTEREST_RATE / 12;
+        const numberOfPayments = LOAN_TERM_YEARS * 12;
+        return monthlyPayment / (monthlyInterestRate / (1 - Math.pow(1 + monthlyInterestRate, -numberOfPayments)));
+    }
+
+    function updateResults(housePrice, salary) {
+        const monthlyPayment = calculateMonthlyPayment(housePrice);
+        const percentageOfIncome = (monthlyPayment / salary) * 100;
+
+        document.getElementById('monthlyPayment').innerText = monthlyPayment.toFixed(2);
+        document.getElementById('percentageOfIncome').innerText = percentageOfIncome.toFixed(2);
+    }
+</script>
+</body>
+</html>
