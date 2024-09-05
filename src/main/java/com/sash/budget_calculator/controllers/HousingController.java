@@ -1,11 +1,15 @@
 package com.sash.budget_calculator.controllers;
 
 import com.sash.budget_calculator.model.Housing;
+import com.sash.budget_calculator.repositories.HousingRepository;
 import com.sash.budget_calculator.services.HousingService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 
 @Controller
@@ -50,6 +54,21 @@ public class HousingController {
         housingService.deleteHousing(id);
         return "redirect:/housing";
     }
+
+    @Autowired
+    private HousingRepository housingRepository;
+
+    //NOT USED
+    @GetMapping("/homePrices")
+    public String getAverageHomePrices(Model model) {
+        // fetching only the average home prices from the Housing repository
+        List<Double> averageHomePrices = housingRepository.findAll().stream()
+                .map(Housing::getAverageHomePrice)
+                .collect(Collectors.toList());
+        model.addAttribute("averageHomePrices", averageHomePrices);
+        return "housing/homePriceSlider";
+    }
+
 }
 
 

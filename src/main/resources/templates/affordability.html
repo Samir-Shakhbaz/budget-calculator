@@ -21,8 +21,24 @@
             opacity: 1;
         }
 
-        .value-display {
-            margin: 10px 0;
+        .highlight {
+            background-color: lightgreen;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th, td {
+            padding: 8px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        th {
+            background-color: #f2f2f2;
         }
     </style>
 </head>
@@ -30,8 +46,8 @@
 <h1>Affordability Calculator</h1>
 
 <div class="slider-container">
-    <label for="housePriceSlider">House Price: $<span id="housePriceDisplay">300000</span></label>
-    <input type="range" id="housePriceSlider" class="slider" min="100000" max="1000000" step="10000" value="300000" oninput="updateHousePrice(this.value)">
+    <label for="housePriceSlider">House Price: $<span id="housePriceDisplay" th:text="${initialHousePrice}">300000</span></label>
+    <input type="range" id="housePriceSlider" class="slider" min="100000" max="1000000" step="10000" th:value="${initialHousePrice}" oninput="updateHousePrice(this.value)">
 </div>
 
 <div class="slider-container">
@@ -39,45 +55,81 @@
     <input type="range" id="salarySlider" class="slider" min="2000" max="20000" step="500" value="5000" oninput="updateSalary(this.value)">
 </div>
 
-<div id="results" th:if="${monthlyPayment != null}">
-    <h2>Results:</h2>
-    <p>Monthly Payment: $<span id="monthlyPayment">0</span></p>
-    <p>Percentage of Income: <span id="percentageOfIncome">0</span>%</p>
-</div>
+<h1>Housing List</h1>
+<table>
+    <thead>
+    <tr>
+        <th>ID</th>
+        <th>Location</th>
+        <th>Average Rent</th>
+        <th>Average Home Price</th>
+    </tr>
+    </thead>
+    <tbody>
+
+    <tr th:each="housing : ${housingList}">
+        <td th:text="${housing.id}"></td>
+        <td th:text="${housing.location}"></td>
+        <td th:text="${housing.averageRent}"></td>
+        <td th:text="${housing.averageHomePrice}"></td>
+    </tr>
+    </tbody>
+</table>
 
 <script>
-    // Constants for calculation
     const LOAN_TERM_YEARS = 30;
-    const INTEREST_RATE = 0.03; // Example fixed interest rate
+    const INTEREST_RATE = 0.03; // Example interest rate (3%)
+    const PERCENTAGE_OF_SALARY = 0.30; // Example percentage of salary going to mortgage
+
+    document.addEventListener('DOMContentLoaded', function() {
+        const initialPrice = parseFloat(document.getElementById('housePriceSlider').value);
+        highlightRow(initialPrice);
+    });
 
     function updateHousePrice(value) {
         document.getElementById('housePriceDisplay').innerText = value;
-        const salary = calculateRequiredSalary(value);
+
+        const salary = calculateRequiredSalary(parseFloat(value));
+        document.getElementById('salarySlider').value = salary.toFixed(2);
         document.getElementById('salaryDisplay').innerText = salary.toFixed(2);
-        updateResults(value, salary);
+
+        highlightRow(parseFloat(value));
     }
 
-    function updateSalary(value) {
+        function updateSalary(value) {
         document.getElementById('salaryDisplay').innerText = value;
-        const housePrice = calculateRequiredHousePrice(value);
+
+        const housePrice = calculateAffordableHousePrice(parseFloat(value));
+        document.getElementById('housePriceSlider').value = housePrice.toFixed(2);
         document.getElementById('housePriceDisplay').innerText = housePrice.toFixed(2);
-        updateResults(housePrice, value);
+
+        highlightRow(housePrice);
+    }
+
+    function highlightRow(targetPrice) {
+        const rows = document.querySelectorAll('tbody tr');
+
+        rows.forEach(row => {
+            const averageHomePrice = parseFloat(row.querySelector('td:nth-child(4)').innerText.trim());
+            if (averageHomePrice === targetPrice) {
+                row.classList.add('highlight');
+            } else {
+                row.classList.remove('highlight');
+            }
+        });
     }
 
     function calculateRequiredSalary(housePrice) {
-        // Calculate the required monthly salary to afford the house price
         const monthlyPayment = calculateMonthlyPayment(housePrice);
-        return monthlyPayment * 2.5; // Example ratio for affordability
+        return monthlyPayment / PERCENTAGE_OF_SALARY; // Example: 30% of salary goes to mortgage
     }
 
-    function calculateRequiredHousePrice(salary) {
-        // Calculate the maximum house price affordable based on the salary
-        const monthlyPayment = salary / 2.5; // Example ratio for affordability
+    function calculateAffordableHousePrice(salary) {
+        const monthlyPayment = salary * PERCENTAGE_OF_SALARY; // 30% of salary goes to mortgage
         return calculateHousePrice(monthlyPayment);
     }
 
     function calculateMonthlyPayment(housePrice) {
-        // Monthly mortgage payment calculation
         const loanAmount = housePrice;
         const monthlyInterestRate = INTEREST_RATE / 12;
         const numberOfPayments = LOAN_TERM_YEARS * 12;
@@ -85,18 +137,9 @@
     }
 
     function calculateHousePrice(monthlyPayment) {
-        // Inverse calculation to determine the house price
         const monthlyInterestRate = INTEREST_RATE / 12;
         const numberOfPayments = LOAN_TERM_YEARS * 12;
         return monthlyPayment / (monthlyInterestRate / (1 - Math.pow(1 + monthlyInterestRate, -numberOfPayments)));
-    }
-
-    function updateResults(housePrice, salary) {
-        const monthlyPayment = calculateMonthlyPayment(housePrice);
-        const percentageOfIncome = (monthlyPayment / salary) * 100;
-
-        document.getElementById('monthlyPayment').innerText = monthlyPayment.toFixed(2);
-        document.getElementById('percentageOfIncome').innerText = percentageOfIncome.toFixed(2);
     }
 </script>
 </body>
